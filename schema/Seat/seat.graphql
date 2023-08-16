@@ -1,0 +1,25 @@
+type Seat @entity {
+  id: ID! # The seat contract address
+  hub: Hub! @derivedFrom(field: "id"),
+  name: String!
+  image_uri: String!
+  description: String!
+  benefits: [SeatBenefits!]! @derivedFrom(field: "id")
+  saleDetail: Sale! @derivedFrom(field: "id")
+}
+
+type SeatBenefits @entity {
+    id: ID! # The seat contract address
+    name: String!
+    status: String!
+}
+
+type Sale @entity {
+    id: ID! # The seat contract address
+    totalSupply: BigInt!
+    tokensMinted: BigInt!
+    startTime: BigInt!
+    endTime: BigInt!
+    price: BigInt!
+    disabled: Boolean!
+}

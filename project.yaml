@@ -1,0 +1,63 @@
+specVersion: 1.0.0
+name: xion-indexer
+version: 1.0.0
+runner:
+  node:
+    name: "@subql/node-cosmos"
+    version: "*"
+  query:
+    name: "@subql/query"
+    version: "*"
+description: >-
+  This is the indexer solution for the xion chain
+repository: "https://github.com/subquery/cosmos-subql-starter"
+schema:
+  file: ./combined.graphql
+network:
+  chainId: xion-testnet-1
+  # This endpoint must be a public non-pruned archive node
+  # We recommend providing more than one endpoint for improved reliability, performance, and uptime.
+  # This is a public node that is rate limited, which will affect indexing speed.
+  # When developing your project we strongly suggest getting a private API key.
+  endpoint: "http://localhost:26657"
+  port: 26657
+  # dictionary: "https://api.subquery.network/sq/subquery/cosmos-osmosis-dictionary"
+  chainTypes:
+    # osmosis.gamm.v1beta1:
+    #   file: "./proto/cosmos/osmosis/gamm/v1beta1/tx.proto"
+    #   messages:
+    #     - MsgSwapExactAmountIn
+    # osmosis.poolmanager.v1beta1:
+    #   # needed by MsgSwapExactAmountIn
+    #   file: "./proto/cosmos/osmosis/poolmanager/v1beta1/swap_route.proto"
+    #   messages:
+    #     - SwapAmountInRoute
+    # cosmos.base.v1beta1:
+    #   # needed by MsgSwapExactAmountIn
+    #   file: "./proto/cosmos/cosmos.base.v1beta1.coin.proto"
+    #   messages:
+    #     - "Coin"
+dataSources:
+  - kind: cosmos/Runtime
+    startBlock: 20000
+    mapping:
+      file: ./dist/index.js
+      handlers:
+        # Using block handlers slows your project down as they can be executed with each and every block. Only use if you need to
+        # - handler: handleBlock
+        #   kind: cosmos/BlockHandler
+        # Using transaction handlers without filters slows your project down as they can be executed with each and every transaction
+        # - handler: handleTransaction
+        #   kind: cosmos/TransactionHandler
+        - handler: handleHubContractInstantiate
+          kind: cosmos/EventHandler
+          filter:
+            type: instantiate
+            attribute:
+              code_id: 6
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgInstantiateContract
+        # - handler: handleMessage
+        #   kind: cosmos/MessageHandler
+        #   filter:
+        #     type: /osmosis.gamm.v1beta1.MsgSwapExactAmountIn

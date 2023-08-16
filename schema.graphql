@@ -1,0 +1,17 @@
+# To improve query performance, we strongly suggest adding indexes to any field that you plan to filter or sort by
+# Add the `@index` or `@index(unique: true)` annotation after any non-key field
+# https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
+
+# import Seat from "./schema/Seat/seat.graphql"
+# import Hub from "./schema/Hub/hub.graphql"
+
+type Hubs @entity {
+  id: ID! # The block height
+  hubs: [Hub]! @derivedFrom(field: "id")
+}
+
+type Seats @entity {
+  id: ID! # The hub contract address
+  seats: [Seat]! @derivedFrom(field: "id")
+  latestSeat: Seat @derivedFrom(field: "id")
+}
