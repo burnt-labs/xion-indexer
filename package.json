@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
-    "codegen": "node graph_combiner && subql codegen",
+    "codegen": "subql codegen",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
     "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && yarn run build",
@@ -22,9 +22,7 @@
   "license": "MIT",
   "devDependencies": {
     "@cosmjs/stargate": "^0.28.9",
-    "@graphql-tools/graphql-file-loader": "^8.0.0",
-    "@graphql-tools/load": "^8.0.0",
-    "@subql/cli": "latest",
+    "@subql/cli": "^3.5.1",
     "@subql/node-cosmos": "latest",
     "@subql/testing": "latest",
     "typescript": "^4.7.4"

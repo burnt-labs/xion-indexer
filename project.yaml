@@ -12,14 +12,15 @@ description: >-
   This is the indexer solution for the xion chain
 repository: "https://github.com/subquery/cosmos-subql-starter"
 schema:
-  file: ./combined.graphql
+  file: ./schema.graphql
 network:
-  chainId: xion-testnet-1
+  chainId: xion-local-testnet-1
   # This endpoint must be a public non-pruned archive node
   # We recommend providing more than one endpoint for improved reliability, performance, and uptime.
   # This is a public node that is rate limited, which will affect indexing speed.
   # When developing your project we strongly suggest getting a private API key.
-  endpoint: "http://localhost:26657"
+  endpoint: "rpc://192.168.1.22:26657"
+  #https://rpc.xion-testnet-1.burnt.com:443
   port: 26657
   # dictionary: "https://api.subquery.network/sq/subquery/cosmos-osmosis-dictionary"
   chainTypes:
@@ -39,7 +40,7 @@ network:
     #     - "Coin"
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 20000
+    startBlock: 116919
     mapping:
       file: ./dist/index.js
       handlers:
@@ -54,7 +55,14 @@ dataSources:
           filter:
             type: instantiate
             attribute:
-              code_id: 6
+              code_id: "10"
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgInstantiateContract
+              
+        - handler: handleHubContractInstantiateMetadata
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgInstantiateContract
         # - handler: handleMessage

@@ -2,16 +2,59 @@
 # Add the `@index` or `@index(unique: true)` annotation after any non-key field
 # https://academy.subquery.network/build/graphql.html#indexing-by-non-primary-key-field
 
-# import Seat from "./schema/Seat/seat.graphql"
-# import Hub from "./schema/Hub/hub.graphql"
-
-type Hubs @entity {
+type AllHub @entity {
   id: ID! # The block height
-  hubs: [Hub]! @derivedFrom(field: "id")
+  allHub: [String]!, # Array of hub contracts
 }
 
-type Seats @entity {
-  id: ID! # The hub contract address
-  seats: [Seat]! @derivedFrom(field: "id")
-  latestSeat: Seat @derivedFrom(field: "id")
+# type AllSeat @entity {
+#   id: ID! # The hub contract address
+#   seats: [Seat]! 
+#   latestSeat: Seat 
+# }
+
+type Hub @entity {
+  id: ID!, # The hub contract address
+  name: String!,
+  hub_url: String!,
+  description: String!,
+  tags: [String]!,
+  social_links: [SocialLink]! @derivedFrom(field:"hub"),
+  creator: String!,
+  thumbnail_image_url: String!,
+  banner_image_url: String!,
+  # seat_contracts: AllSeat,
 }
+
+type SocialLink @entity {
+  id: ID!,
+  hub: Hub! @index(unique: true) # The hub contract address
+  name: String!,
+  url: String!,
+}
+
+# type Seat @entity {
+#   id: ID! # The seat contract address
+#   hub: Hub! ,
+#   name: String!
+#   image_uri: String!
+#   description: String!
+#   benefits: [SeatBenefit!]! 
+#   saleDetail: Sale! 
+# }
+
+# type SeatBenefit @entity {
+#     id: ID! # The seat contract address
+#     name: String!
+#     status: String!
+# }
+
+# type Sale @entity {
+#     id: ID! # The seat contract address
+#     totalSupply: BigInt!
+#     tokensMinted: BigInt!
+#     startTime: BigInt!
+#     endTime: BigInt!
+#     price: BigInt!
+#     disabled: Boolean!
+# }
