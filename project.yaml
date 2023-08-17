@@ -20,36 +20,14 @@ network:
   # This is a public node that is rate limited, which will affect indexing speed.
   # When developing your project we strongly suggest getting a private API key.
   endpoint: "rpc://192.168.1.22:26657"
-  #https://rpc.xion-testnet-1.burnt.com:443
+  # testnet -> https://rpc.xion-testnet-1.burnt.com:443
   port: 26657
-  # dictionary: "https://api.subquery.network/sq/subquery/cosmos-osmosis-dictionary"
-  chainTypes:
-    # osmosis.gamm.v1beta1:
-    #   file: "./proto/cosmos/osmosis/gamm/v1beta1/tx.proto"
-    #   messages:
-    #     - MsgSwapExactAmountIn
-    # osmosis.poolmanager.v1beta1:
-    #   # needed by MsgSwapExactAmountIn
-    #   file: "./proto/cosmos/osmosis/poolmanager/v1beta1/swap_route.proto"
-    #   messages:
-    #     - SwapAmountInRoute
-    # cosmos.base.v1beta1:
-    #   # needed by MsgSwapExactAmountIn
-    #   file: "./proto/cosmos/cosmos.base.v1beta1.coin.proto"
-    #   messages:
-    #     - "Coin"
 dataSources:
   - kind: cosmos/Runtime
     startBlock: 116919
     mapping:
       file: ./dist/index.js
       handlers:
-        # Using block handlers slows your project down as they can be executed with each and every block. Only use if you need to
-        # - handler: handleBlock
-        #   kind: cosmos/BlockHandler
-        # Using transaction handlers without filters slows your project down as they can be executed with each and every transaction
-        # - handler: handleTransaction
-        #   kind: cosmos/TransactionHandler
         - handler: handleHubContractInstantiate
           kind: cosmos/EventHandler
           filter:
@@ -65,7 +43,3 @@ dataSources:
             type: wasm
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgInstantiateContract
-        # - handler: handleMessage
-        #   kind: cosmos/MessageHandler
-        #   filter:
-        #     type: /osmosis.gamm.v1beta1.MsgSwapExactAmountIn

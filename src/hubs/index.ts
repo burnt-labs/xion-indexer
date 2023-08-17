@@ -50,6 +50,7 @@ export async function handleHubContractInstantiateMetadataHelper(
               hubMetadata.thumbnail_image_url,
               hubMetadata.banner_image_url
             );
+            
             let OldSocialLink = await SocialLink.get(contractAddress);
             if (!OldSocialLink) {
               let socialLink = new SocialLink(

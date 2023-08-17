@@ -7,11 +7,12 @@ type AllHub @entity {
   allHub: [String]!, # Array of hub contracts
 }
 
-# type AllSeat @entity {
-#   id: ID! # The hub contract address
-#   seats: [Seat]! 
-#   latestSeat: Seat 
-# }
+# This entity stores hub's seat details
+type HubSeat @entity {
+  id: ID! # The hub contract address
+  seats: [String]! # Array of seat contract addresses for this hub
+  latestSeat: Seat @derivedFrom(field:"hubSeat") # This is a lookup for the latest seat contract deployed by hub
+}
 
 type Hub @entity {
   id: ID!, # The hub contract address
@@ -23,7 +24,7 @@ type Hub @entity {
   creator: String!,
   thumbnail_image_url: String!,
   banner_image_url: String!,
-  # seat_contracts: AllSeat,
+  seat_contracts: [Seat] @derivedFrom(field:"hub"),
 }
 
 type SocialLink @entity {
@@ -33,28 +34,31 @@ type SocialLink @entity {
   url: String!,
 }
 
-# type Seat @entity {
-#   id: ID! # The seat contract address
-#   hub: Hub! ,
-#   name: String!
-#   image_uri: String!
-#   description: String!
-#   benefits: [SeatBenefit!]! 
-#   saleDetail: Sale! 
-# }
+type Seat @entity {
+  id: ID! # The seat contract address
+  hub: Hub!, # Hub this Seat belongs to
+  hubSeat: HubSeat! # HubSeat container this seat belongs to
+  name: String!
+  image_uri: String!
+  description: String!
+  benefits: [SeatBenefit!]! @derivedFrom(field:"seat")
+  saleDetail: Sale! @derivedFrom(field:"seat") # Lookup for the sale details of this seat
+}
 
-# type SeatBenefit @entity {
-#     id: ID! # The seat contract address
-#     name: String!
-#     status: String!
-# }
+type SeatBenefit @entity {
+    id: ID! # The seat contract address
+    seat: Seat! @index(unique: true)
+    name: String!
+    status: String!
+}
 
-# type Sale @entity {
-#     id: ID! # The seat contract address
-#     totalSupply: BigInt!
-#     tokensMinted: BigInt!
-#     startTime: BigInt!
-#     endTime: BigInt!
-#     price: BigInt!
-#     disabled: Boolean!
-# }
+type Sale @entity {
+    id: ID! # The seat contract address
+    seat: Seat! # The seat contract address this sale belongs to
+    totalSupply: BigInt!
+    tokensMinted: BigInt!
+    startTime: BigInt!
+    endTime: BigInt!
+    price: BigInt!
+    disabled: Boolean!
+}
