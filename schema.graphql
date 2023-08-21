@@ -5,18 +5,20 @@
 type AllHub @entity {
   id: ID! # The block height
   allHub: [String]!, # Array of hub contracts
+  hub: Hub @derivedFrom(field:"allHub") # This is a lookup for the hub contract deployed by hub
 }
 
 # This entity stores hub's seat details
 type HubSeat @entity {
   id: ID! # The hub contract address
-  seats: [String]! # Array of seat contract addresses for this hub
+  seatContracts: [String]! # Array of seat contract addresses for this hub
   latestSeat: Seat @derivedFrom(field:"hubSeat") # This is a lookup for the latest seat contract deployed by hub
 }
 
 type Hub @entity {
   id: ID!, # The hub contract address
-  name: String!,
+  allHub: AllHub! # This id is always pointing to the "hubs" key 
+  name: String!, @index(unique: true)
   hub_url: String!,
   description: String!,
   tags: [String]!,
@@ -41,20 +43,20 @@ type Seat @entity {
   name: String!
   image_uri: String!
   description: String!
-  benefits: [SeatBenefit!]! @derivedFrom(field:"seat")
-  saleDetail: Sale! @derivedFrom(field:"seat") # Lookup for the sale details of this seat
+  benefits: [SeatBenefit!]! @derivedFrom(field:"benefitSeat")
+  saleDetail: Sale! @derivedFrom(field:"saleSeat") # Lookup for the sale details of this seat
 }
 
 type SeatBenefit @entity {
     id: ID! # The seat contract address
-    seat: Seat! @index(unique: true)
+    benefitSeat: Seat! @index(unique: true)
     name: String!
     status: String!
 }
 
 type Sale @entity {
     id: ID! # The seat contract address
-    seat: Seat! # The seat contract address this sale belongs to
+    saleSeat: Seat! # The seat contract address this sale belongs to
     totalSupply: BigInt!
     tokensMinted: BigInt!
     startTime: BigInt!

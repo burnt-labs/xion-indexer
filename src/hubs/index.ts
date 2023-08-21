@@ -6,15 +6,25 @@ export async function handleHubContractInstantiateHelper(
   event: CosmosEvent
 ): Promise<void> {
   if (event.event.type === "instantiate") {
+    logger.info("Instantiate event detected");
     let hubs: AllHub | undefined;
-    hubs = await AllHub.get("hubs");
+    hubs = await AllHub.get("all_hubs");
     if (!hubs) {
-      hubs = new AllHub("hubs", []);
-      let contractAddress = event.event.attributes.find(
-        (attr) => attr.key === "_contract_address"
-      )?.value;
-      hubs?.allHub.push(contractAddress || "No Contract");
-      await hubs?.save();
+      hubs = new AllHub("all_hubs", []);
+    }
+    let contractAddress = event.event.attributes.find(
+      (attr) => attr.key === "_contract_address"
+    )?.value;
+    if (contractAddress) {
+      const exists = hubs.allHub.find((hub) => hub === contractAddress);
+      if (!exists) {
+        logger.info("New hub detected ", contractAddress);
+        hubs.allHub.push(contractAddress);
+        // Remove duplication from the arrays which can occur
+        // when the function is called more than once for a single event
+        hubs.allHub = Array.from(new Set(hubs.allHub));
+        await hubs.save();
+      }
     }
   }
 }
@@ -27,8 +37,11 @@ export async function handleHubContractInstantiateMetadataHelper(
       (attr) => attr.key === "_contract_address"
     )?.value;
     if (contractAddress) {
-      let hubs = await AllHub.get("hubs");
-      let hubExists = hubs?.allHub.find((hub) => hub === contractAddress);
+      let hubs = await AllHub.get("all_hubs");
+      if (!hubs) {
+        return;
+      }
+      let hubExists = hubs.allHub.find((hub) => hub === contractAddress);
       if (!hubExists) {
         // This hub isn't instantiated from our codeId
         return;
@@ -42,6 +55,7 @@ export async function handleHubContractInstantiateMetadataHelper(
             let hubMetadata: HubMetadata = JSON.parse(hubJsonMetadata);
             let hub = new Hub(
               contractAddress,
+              "all_hubs",
               hubMetadata.name,
               hubMetadata.hub_url,
               hubMetadata.description,
@@ -50,7 +64,7 @@ export async function handleHubContractInstantiateMetadataHelper(
               hubMetadata.thumbnail_image_url,
               hubMetadata.banner_image_url
             );
-            
+
             let OldSocialLink = await SocialLink.get(contractAddress);
             if (!OldSocialLink) {
               let socialLink = new SocialLink(
@@ -62,7 +76,10 @@ export async function handleHubContractInstantiateMetadataHelper(
               await socialLink.save();
             }
             await hub.save();
-            hubs?.allHub.push(contractAddress);
+            hubs.allHub.push(contractAddress);
+            // Remove duplication from the arrays which can occur
+            // when the function is called more than once for a single event
+            hubs.allHub = Array.from(new Set(hubs.allHub));
             await hubs?.save();
           }
         }

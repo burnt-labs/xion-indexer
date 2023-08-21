@@ -19,12 +19,12 @@ network:
   # We recommend providing more than one endpoint for improved reliability, performance, and uptime.
   # This is a public node that is rate limited, which will affect indexing speed.
   # When developing your project we strongly suggest getting a private API key.
-  endpoint: "rpc://192.168.1.22:26657"
+  endpoint: "rpc://192.168.1.25:26657"
   # testnet -> https://rpc.xion-testnet-1.burnt.com:443
   port: 26657
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 116919
+    startBlock: 121643
     mapping:
       file: ./dist/index.js
       handlers:
