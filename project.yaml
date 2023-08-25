@@ -19,27 +19,34 @@ network:
   # We recommend providing more than one endpoint for improved reliability, performance, and uptime.
   # This is a public node that is rate limited, which will affect indexing speed.
   # When developing your project we strongly suggest getting a private API key.
-  endpoint: "rpc://192.168.1.25:26657"
+  endpoint: "rpc://192.168.1.24:26657"
   # testnet -> https://rpc.xion-testnet-1.burnt.com:443
   port: 26657
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 121643
+    startBlock: 132773
     mapping:
       file: ./dist/index.js
       handlers:
+        # Hub contract handlers
         - handler: handleHubContractInstantiate
           kind: cosmos/EventHandler
           filter:
             type: instantiate
             attribute:
-              code_id: "10"
+              code_id: "19"
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgInstantiateContract
-              
         - handler: handleHubContractInstantiateMetadata
           kind: cosmos/EventHandler
           filter:
-            type: wasm
+            type: wasm-metadata-instantiate
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgInstantiateContract
+        #Seat contract handlers
+        - handler: handleSeatContractInstantiateMetadata
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm-metadata-instantiate
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgInstantiateContract

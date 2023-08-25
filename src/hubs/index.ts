@@ -1,12 +1,17 @@
 import { CosmosEvent } from "@subql/types-cosmos";
-import { AllHub, Hub, SocialLink } from "../types";
+import { AllHub, Hub, HubSeat, SocialLink } from "../types";
 import { HubMetadata } from "../interfaces";
 
 export async function handleHubContractInstantiateHelper(
   event: CosmosEvent
 ): Promise<void> {
   if (event.event.type === "instantiate") {
-    logger.info("Instantiate event detected");
+    let codeId = event.event.attributes.find((attr) => attr.key === "code_id")?.value;
+    if (codeId !== "19") {
+      // This event is not for our codeId
+      return;
+    }
+    logger.info("HUB Instantiate event detected");
     let hubs: AllHub | undefined;
     hubs = await AllHub.get("all_hubs");
     if (!hubs) {
@@ -19,11 +24,13 @@ export async function handleHubContractInstantiateHelper(
       const exists = hubs.allHub.find((hub) => hub === contractAddress);
       if (!exists) {
         logger.info("New hub detected ", contractAddress);
+        let hubSeat = new HubSeat(contractAddress, []);
         hubs.allHub.push(contractAddress);
         // Remove duplication from the arrays which can occur
         // when the function is called more than once for a single event
         hubs.allHub = Array.from(new Set(hubs.allHub));
         await hubs.save();
+        await hubSeat.save();
       }
     }
   }
@@ -32,7 +39,8 @@ export async function handleHubContractInstantiateHelper(
 export async function handleHubContractInstantiateMetadataHelper(
   event: CosmosEvent
 ): Promise<void> {
-  if (event.event.type === "wasm") {
+  if (event.event.type === "wasm-metadata-instantiate") {
+    logger.info("Hub Metadata Instantiate event detected");
     let contractAddress = event.event.attributes.find(
       (attr) => attr.key === "_contract_address"
     )?.value;
@@ -53,6 +61,10 @@ export async function handleHubContractInstantiateMetadataHelper(
           )?.value;
           if (hubJsonMetadata) {
             let hubMetadata: HubMetadata = JSON.parse(hubJsonMetadata);
+            // we use this check to confirm that this event is for a hub
+            if (!hubMetadata.hub_url) {
+              return;
+            }
             let hub = new Hub(
               contractAddress,
               "all_hubs",
@@ -61,6 +73,7 @@ export async function handleHubContractInstantiateMetadataHelper(
               hubMetadata.description,
               hubMetadata.tags,
               hubMetadata.creator,
+              hubMetadata.creator, // creator is owner at instantiate
               hubMetadata.thumbnail_image_url,
               hubMetadata.banner_image_url
             );
@@ -77,9 +90,6 @@ export async function handleHubContractInstantiateMetadataHelper(
             }
             await hub.save();
             hubs.allHub.push(contractAddress);
-            // Remove duplication from the arrays which can occur
-            // when the function is called more than once for a single event
-            hubs.allHub = Array.from(new Set(hubs.allHub));
             await hubs?.save();
           }
         }

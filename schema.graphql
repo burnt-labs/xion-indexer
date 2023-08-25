@@ -24,6 +24,7 @@ type Hub @entity {
   tags: [String]!,
   social_links: [SocialLink]! @derivedFrom(field:"hub"),
   creator: String!,
+  owner: String!, # The owner of the hub can change e.g. when the hub is transferred
   thumbnail_image_url: String!,
   banner_image_url: String!,
   seat_contracts: [Seat] @derivedFrom(field:"hub"),
