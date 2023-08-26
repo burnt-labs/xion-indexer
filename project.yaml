@@ -50,3 +50,10 @@ dataSources:
             type: wasm-metadata-instantiate
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgInstantiateContract
+
+        - handler: handleSeatContractPrimarySaleCreated
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm-sales-add_primary_sale
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgExecuteContract

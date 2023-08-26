@@ -27,3 +27,17 @@ type SeatBenefit = {
   name: string;
   status: string;
 };
+
+export type ISale = {
+  total_supply: string;
+  tokens_minted: string;
+  start_time: string;
+  end_time: string;
+  price: Array<ICoin>;
+  disabled: boolean;
+}
+
+export type ICoin = {
+  denom: string;
+  amount: string;
+}

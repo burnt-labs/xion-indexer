@@ -62,6 +62,13 @@ type Sale @entity {
     tokensMinted: BigInt!
     startTime: BigInt!
     endTime: BigInt!
-    price: BigInt!
+    price: [Coin]! @derivedFrom(field:"sale")
     disabled: Boolean!
+}
+
+type Coin @entity {
+  id: ID! # The seat contract address
+  sale: Sale! # The seat address + sale time to make this unique
+  denom: String!
+  amount: BigInt!
 }

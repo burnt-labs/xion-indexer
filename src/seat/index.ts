@@ -1,6 +1,6 @@
 import { CosmosEvent } from "@subql/types-cosmos";
-import { Hub, HubSeat, Seat, SeatBenefit } from "../types";
-import { SeatMetadata } from "../interfaces";
+import { Coin, Hub, HubSeat, Sale, Seat, SeatBenefit } from "../types";
+import { ISale, SeatMetadata } from "../interfaces";
 
 async function setupHubSeat(
   hubContractAddress: string | undefined,
@@ -77,6 +77,51 @@ export async function handleSeatContractInstantiateMetadataHelper(
       }
     } else {
       logger.info("Seat Metadata Instantiate event detected but no metadata");
+    }
+  }
+}
+
+export async function handleSeatContractPrimarySaleCreatedHelper(event: CosmosEvent): Promise<void> {
+  if (event.event.type === "wasm-sales-add_primary_sale") {
+    logger.info("Seat Sale Created event detected");
+    let seatContractAddress = event.event.attributes.find(
+      (attr) => attr.key === "contract_address"
+    )?.value;
+    if (!seatContractAddress) {
+      logger.info("Seat Sale Created event detected but no seat contract address");
+      return;
+    }
+    let seat = await Seat.get(seatContractAddress);
+    if (!seat) {
+      logger.info("Seat Sale Created event detected but no seat attached to seat contract address");
+      return;
+    }
+    let saleMetaJson = event.event.attributes.find(
+      (attr) => attr.key === "sale_object"
+    )?.value;
+    if (saleMetaJson) {
+      let saleMeta: ISale = JSON.parse(saleMetaJson);
+      logger.info("Sale Meta: " + saleMetaJson);
+      let sale = new Sale(
+        seatContractAddress,
+        seatContractAddress,
+        BigInt(saleMeta.total_supply),
+        BigInt(saleMeta.tokens_minted),
+        BigInt(saleMeta.start_time),
+        BigInt(saleMeta.end_time),
+        saleMeta.disabled
+      )
+      for (let coin of saleMeta.price) {
+        await (new Coin(
+          seatContractAddress,
+          seatContractAddress+saleMeta.start_time,
+          coin.denom,
+          BigInt(coin.amount)
+        ).save());
+      }
+      await sale.save();
+    } else {
+      logger.info("Seat Sale Created event detected but no sale meta");
     }
   }
 }
