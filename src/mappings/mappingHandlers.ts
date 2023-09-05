@@ -1,6 +1,7 @@
 import { CosmosEvent } from "@subql/types-cosmos";
 import { handleHubContractInstantiateHelper, handleHubContractInstantiateMetadataHelper } from "../hubs";
-import { handleSeatContractInstantiateMetadataHelper, handleSeatContractPrimarySaleCreatedHelper } from "../seat";
+import { handleSeatContractInstantiateMetadataHelper } from "../seat";
+import { handleSeatContractPrimarySaleCreatedHelper } from "../sale";
 
 export async function handleHubContractInstantiate(
   event: CosmosEvent
@@ -24,4 +25,8 @@ export async function handleSeatContractPrimarySaleCreated(
   event: CosmosEvent
 ): Promise<void> {
   await handleSeatContractPrimarySaleCreatedHelper(event);
+}
+
+export async function handleSeatContractPrimarySaleHalted(): Promise<void> {
+  await handleSeatContractPrimarySaleHalted();
 }

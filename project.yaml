@@ -57,3 +57,10 @@ dataSources:
             type: wasm-sales-add_primary_sale
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgExecuteContract
+
+        - handler: handleSeatContractPrimarySaleHalted
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm-sales-halt_sale
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgExecuteContract
