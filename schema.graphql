@@ -18,7 +18,7 @@ type HubSeat @entity {
 type Hub @entity {
   id: ID!, # The hub contract address
   allHub: AllHub! # This id is always pointing to the "hubs" key 
-  name: String!, @index(unique: true)
+  name: String!,
   hub_url: String!,
   description: String!,
   tags: [String]!,
@@ -32,7 +32,7 @@ type Hub @entity {
 
 type SocialLink @entity {
   id: ID!,
-  hub: Hub! @index(unique: true) # The hub contract address
+  hub: Hub! # The hub contract address
   name: String!,
   url: String!,
 }
@@ -50,7 +50,7 @@ type Seat @entity {
 
 type SeatBenefit @entity {
     id: ID! # The seat contract address
-    benefitSeat: Seat! @index(unique: true)
+    benefitSeat: Seat!
     name: String!
     status: String!
 }

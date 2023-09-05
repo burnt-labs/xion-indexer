@@ -14,17 +14,17 @@ repository: "https://github.com/subquery/cosmos-subql-starter"
 schema:
   file: ./schema.graphql
 network:
-  chainId: xion-local-testnet-1
+  chainId: xion-testnet-1
   # This endpoint must be a public non-pruned archive node
   # We recommend providing more than one endpoint for improved reliability, performance, and uptime.
   # This is a public node that is rate limited, which will affect indexing speed.
   # When developing your project we strongly suggest getting a private API key.
-  endpoint: "rpc://192.168.1.24:26657"
+  endpoint: "https://rpc.xion-testnet-1.burnt.com:443"
   # testnet -> https://rpc.xion-testnet-1.burnt.com:443
-  port: 26657
+  port: 443
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 132773
+    startBlock: 2353507
     mapping:
       file: ./dist/index.js
       handlers:
