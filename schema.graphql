@@ -4,7 +4,6 @@
 
 type AllHub @entity {
   id: ID! # The block height
-  allHub: [String]!, # Array of hub contracts
   hub: Hub @derivedFrom(field:"allHub") # This is a lookup for the hub contract deployed by hub
 }
 

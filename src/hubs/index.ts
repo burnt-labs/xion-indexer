@@ -6,31 +6,26 @@ export async function handleHubContractInstantiateHelper(
   event: CosmosEvent
 ): Promise<void> {
   if (event.event.type === "instantiate") {
-    let codeId = event.event.attributes.find((attr) => attr.key === "code_id")?.value;
-    if (codeId !== "19") {
+    let codeId = event.event.attributes.find(
+      (attr) => attr.key === "code_id"
+    )?.value;
+    if (codeId !== "4") {
       // This event is not for our codeId
       return;
     }
     logger.info("HUB Instantiate event detected");
-    let hubs: AllHub | undefined;
-    hubs = await AllHub.get("all_hubs");
-    if (!hubs) {
-      hubs = new AllHub("all_hubs", []);
-    }
     let contractAddress = event.event.attributes.find(
       (attr) => attr.key === "_contract_address"
     )?.value;
     if (contractAddress) {
-      const exists = hubs.allHub.find((hub) => hub === contractAddress);
-      if (!exists) {
+      let hub: AllHub | undefined;
+      hub = await AllHub.get(contractAddress);
+      if (!hub) {
+        hub = new AllHub(contractAddress);
         logger.info("New hub detected ", contractAddress);
         let hubSeat = new HubSeat(contractAddress, []);
-        hubs.allHub.push(contractAddress);
-        // Remove duplication from the arrays which can occur
-        // when the function is called more than once for a single event
-        hubs.allHub = Array.from(new Set(hubs.allHub));
-        await hubs.save();
         await hubSeat.save();
+        await hub.save();
       }
     }
   }
@@ -45,13 +40,9 @@ export async function handleHubContractInstantiateMetadataHelper(
       (attr) => attr.key === "_contract_address"
     )?.value;
     if (contractAddress) {
-      let hubs = await AllHub.get("all_hubs");
-      if (!hubs) {
-        return;
-      }
-      let hubExists = hubs.allHub.find((hub) => hub === contractAddress);
-      if (!hubExists) {
-        // This hub isn't instantiated from our codeId
+      let hub = await AllHub.get(contractAddress);
+      if (!hub) {
+        logger.info("Xion Hub not found for the seat contract");
         return;
       } else {
         let oldHub = await Hub.get(contractAddress);
@@ -67,7 +58,7 @@ export async function handleHubContractInstantiateMetadataHelper(
             }
             let hub = new Hub(
               contractAddress,
-              "all_hubs",
+              contractAddress,
               hubMetadata.name,
               hubMetadata.hub_url,
               hubMetadata.description,
@@ -89,8 +80,6 @@ export async function handleHubContractInstantiateMetadataHelper(
               await socialLink.save();
             }
             await hub.save();
-            hubs.allHub.push(contractAddress);
-            await hubs?.save();
           }
         }
       }

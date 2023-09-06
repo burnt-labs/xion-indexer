@@ -24,7 +24,7 @@ network:
   port: 443
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 2353507
+    startBlock: 2361238
     mapping:
       file: ./dist/index.js
       handlers:
@@ -34,7 +34,7 @@ dataSources:
           filter:
             type: instantiate
             attribute:
-              code_id: "19"
+              code_id: "4"
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgInstantiateContract
         - handler: handleHubContractInstantiateMetadata
