@@ -19,12 +19,13 @@ network:
   # We recommend providing more than one endpoint for improved reliability, performance, and uptime.
   # This is a public node that is rate limited, which will affect indexing speed.
   # When developing your project we strongly suggest getting a private API key.
-  endpoint: "https://rpc.xion-testnet-1.burnt.com:443"
+  endpoint: https://rpc.xion-testnet-1.burnt.com:443
+
   # testnet -> https://rpc.xion-testnet-1.burnt.com:443
-  port: 443
+  port: 26657
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 2361238
+    startBlock: 2878210
     mapping:
       file: ./dist/index.js
       handlers:
@@ -62,5 +63,35 @@ dataSources:
           kind: cosmos/EventHandler
           filter:
             type: wasm-sales-halt_sale
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgExecuteContract
+
+        - handler: handleSmartAccountContractInstantiate
+          kind: cosmos/EventHandler
+          filter:
+            type: instantiate
+            attribute:
+              code_id: "15"
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgInstantiateContract2
+
+        - handler: handleSmartAccountContractInstantiateMetadata
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm-create_abstract_account
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgInstantiateContract2
+
+        - handler: handleSmartAccountContractAddAuthenticator
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm-add_auth_method
+            messageFilter:
+              type: /cosmwasm.wasm.v1.MsgExecuteContract
+
+        - handler: handleSmartAccountContractRemoveAuthenticator
+          kind: cosmos/EventHandler
+          filter:
+            type: wasm-remove_auth_method
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgExecuteContract

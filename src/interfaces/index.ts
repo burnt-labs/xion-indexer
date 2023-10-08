@@ -35,9 +35,17 @@ export type ISale = {
   end_time: string;
   price: Array<ICoin>;
   disabled: boolean;
-}
+};
 
 export type ICoin = {
   denom: string;
   amount: string;
-}
+};
+
+export type IAuthenticator = {
+  [x: string]: {
+    pubkey: string;
+    id?: string;
+    signature?: string;
+  };
+};
