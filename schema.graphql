@@ -83,6 +83,6 @@ type SmartAccountAuthenticator @entity {
   account: SmartAccount! # This is a lookup for the smart account
   type: String! # The type of authentication e.g. Secp256k1, Ed25519, etc.
   authenticator: String! # The public key of the authenticator
-  authenticatorId: Int! @index(unique: true) # The id of the authenticator
+  authenticatorId: String! @index(unique: true) # The id of the authenticator
   version: String! # The version of the authenticator
 }

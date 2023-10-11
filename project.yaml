@@ -25,7 +25,7 @@ network:
   port: 26657
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 2878210
+    startBlock: 2914480
     mapping:
       file: ./dist/index.js
       handlers:

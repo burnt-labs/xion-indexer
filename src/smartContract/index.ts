@@ -47,13 +47,23 @@ export async function handleSmartAccountContractInstantiateMetadataHelper(
           let authData: IAuthenticator = JSON.parse(authenticatorData);
           let authType = Object.keys(authData)[0];
           let authPubKey = authData[authType].pubkey;
+          // In order to make the authenticator id unique, we will use the sha256 hash of the contract address
+          // and append the auth id to it with a xion prefix to easily split it later.
+          // This will ensure that the authenticator id is unique and
+          let authId = smartAccount.id + "xion1";
+          let authMethodExists =
+            await SmartAccountAuthenticator.getByAuthenticatorId(authId);
+          if (authMethodExists) {
+            logger.info("Auth method already exists");
+            return;
+          }
           let smartWalletAuth = new SmartAccountAuthenticator(
             uuidv4(),
             contractAddress,
             authType,
             authPubKey,
-            1,
-            "1"
+            authId,
+            "v1"
           );
           await smartWalletAuth.save();
         }
@@ -91,14 +101,21 @@ export async function handleSmartAccountContractAddAuthenticatorHelper(
             logger.info("Auth id is not a number");
             return;
           }
+          // set the latest authenticator id if the current one is greater than the latest
+          // this will ensure that the latest authenticator id is always the highest
+          if (Number(authId) > smartAccount.latestAuthenticatorId) {
+            smartAccount.latestAuthenticatorId = Number(authId);
+          }
+          authId = smartAccount.id + "xion" + authId;
           let smartWalletAuth = new SmartAccountAuthenticator(
             uuidv4(),
             contractAddress,
             authType,
             authPubKey,
-            Number(authId),
-            "1"
+            authId,
+            "v1"
           );
+          await smartAccount.save();
           await smartWalletAuth.save();
         }
       }
@@ -111,23 +128,22 @@ export async function handleSmartAccountContractRemoveAuthenticatorHelper(
 ): Promise<void> {
   if (event.event.type === "wasm-remove_auth_method") {
     logger.info("Smart Account Remove Auth event detected");
-    let contractAddress = event.event.attributes.find(
+    const contractAddress = event.event.attributes.find(
       (attr) => attr.key === "_contract_address"
     )?.value;
     if (contractAddress) {
-      let smartAccount = await SmartAccount.get(contractAddress);
+      const smartAccount = await SmartAccount.get(contractAddress);
       if (!smartAccount) {
         logger.info("No smart account found for the contract");
         return;
       } else {
-        let authenticatorId = event.event.attributes.find(
+        const authenticatorId = event.event.attributes.find(
           (attr) => attr.key === "authenticator_id"
         )?.value;
         if (authenticatorId && Number(authenticatorId)) {
-          let smartWallet =
-            await SmartAccountAuthenticator.getByAuthenticatorId(
-              Number(authenticatorId)
-            );
+          const authId = smartAccount.id + "xion" + authenticatorId;
+          const smartWallet =
+            await SmartAccountAuthenticator.getByAuthenticatorId(authId);
           if (!smartWallet) {
             logger.info("No smart wallet found for the authenticator id");
             return;
