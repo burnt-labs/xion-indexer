@@ -22,7 +22,7 @@
   "license": "MIT",
   "devDependencies": {
     "@cosmjs/stargate": "^0.28.9",
-    "@subql/cli": "^3.5.1",
+    "@subql/cli": "^4.0.5",
     "@subql/node-cosmos": "latest",
     "@subql/testing": "latest",
     "@types/uuid": "^9.0.5",
