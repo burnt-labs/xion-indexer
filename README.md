@@ -16,7 +16,7 @@ Don't forget to install dependencies with `npm install` or `yarn install`!
 
 Although this is a working example SubQuery project, you can edit the SubQuery project by changing the following files:
 
-- The project manifest in `project.yaml` defines the key project configuration and mapping handler filters
+- The project manifest in `project.ts` defines the key project configuration and mapping handler filters
 - The GraphQL Schema (`schema.graphql`) defines the shape of the resulting data that you are using SubQuery to index
 - The Mapping functions in `src/mappings/` directory are typescript functions that handle transformation logic
 
@@ -34,31 +34,27 @@ The simplest way to run your project is by running `yarn dev` or `npm run-script
 
 You can observe the three services start, and once all are running (it may take a few minutes on your first start), please open your browser and head to [http://localhost:3000](http://localhost:3000) - you should see a GraphQL playground showing with the schemas ready to query. [Read the docs for more information](https://academy.subquery.network/run_publish/run.html) or [explore the possible service configuration for running SubQuery](https://academy.subquery.network/run_publish/references.html).
 
+## Deploy contracts and update your project
+1. `cp .env.example .env`
+2. Fill in the `.env` file with your own values
+
 ## Query your project
 
 For this project, you can try to query with the following GraphQL code to get a taste of how it works.
 
 ```graphql
-{
-  query {
-    pools(first: 5, orderBy: SWAP_ROUTES_COUNT_DESC) {
-      nodes {
-        id
-      }
-    }
-    swaps(first: 5) {
-      nodes {
-        id
-        sender
-        tokenInDenom
-        tokenInAmount
-        tokenOutMin
-        swapRoutes(first: 5) {
-          totalCount
+query {
+    smartAccounts {
+        nodes {
+            id
+            authenticators {
+                nodes {
+                    id
+                    type
+                }
+            }
         }
-      }
     }
-  }
 }
 ```
 
