@@ -11,7 +11,7 @@ services:
       - "26656:26656"
       - "26657:26657"
     healthcheck:
-      test: [ "CMD-SHELL", "curl http://localhost:26657/status" ]
+      test: ["CMD-SHELL", "curl http://localhost:26657/status"]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -46,7 +46,7 @@ services:
       DB_PORT: 5432
     volumes:
       - ./:/app
-    command: 
+    command:
       - ${SUB_COMMAND} # set SUB_COMMAND env variable to "test" to run tests
       - -f=/app
       - --db-schema=app
