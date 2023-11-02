@@ -3,19 +3,18 @@ import { AllHub, Hub, HubSeat, SocialLink } from "../types";
 import { HubMetadata } from "../interfaces";
 
 export async function handleHubContractInstantiateHelper(
-  event: CosmosEvent
+  event: CosmosEvent,
 ): Promise<void> {
   if (event.event.type === "instantiate") {
-    let codeId = event.event.attributes.find(
-      (attr) => attr.key === "code_id"
-    )?.value;
+    let codeId = event.event.attributes.find((attr) => attr.key === "code_id")
+      ?.value;
     if (codeId !== "4") {
       // This event is not for our codeId
       return;
     }
     logger.info("HUB Instantiate event detected");
     let contractAddress = event.event.attributes.find(
-      (attr) => attr.key === "_contract_address"
+      (attr) => attr.key === "_contract_address",
     )?.value;
     if (contractAddress) {
       let hub: AllHub | undefined;
@@ -32,12 +31,12 @@ export async function handleHubContractInstantiateHelper(
 }
 
 export async function handleHubContractInstantiateMetadataHelper(
-  event: CosmosEvent
+  event: CosmosEvent,
 ): Promise<void> {
   if (event.event.type === "wasm-metadata-instantiate") {
     logger.info("Hub Metadata Instantiate event detected");
     let contractAddress = event.event.attributes.find(
-      (attr) => attr.key === "_contract_address"
+      (attr) => attr.key === "_contract_address",
     )?.value;
     if (contractAddress) {
       let hub = await AllHub.get(contractAddress);
@@ -48,7 +47,7 @@ export async function handleHubContractInstantiateMetadataHelper(
         let oldHub = await Hub.get(contractAddress);
         if (!oldHub) {
           let hubJsonMetadata = event.event.attributes.find(
-            (attr) => attr.key === "metadata"
+            (attr) => attr.key === "metadata",
           )?.value;
           if (hubJsonMetadata) {
             let hubMetadata: HubMetadata = JSON.parse(hubJsonMetadata);
@@ -66,7 +65,7 @@ export async function handleHubContractInstantiateMetadataHelper(
               hubMetadata.creator,
               hubMetadata.creator, // creator is owner at instantiate
               hubMetadata.thumbnail_image_url,
-              hubMetadata.banner_image_url
+              hubMetadata.banner_image_url,
             );
 
             let OldSocialLink = await SocialLink.get(contractAddress);
@@ -75,7 +74,7 @@ export async function handleHubContractInstantiateMetadataHelper(
                 contractAddress,
                 contractAddress,
                 hubMetadata.name,
-                hubMetadata.hub_url
+                hubMetadata.hub_url,
               );
               await socialLink.save();
             }
