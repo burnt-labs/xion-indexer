@@ -62,3 +62,7 @@ target/
 dist/
 src/types
 project.yaml
+
+# local env files
+.env*.local
+.env
