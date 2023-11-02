@@ -4,6 +4,16 @@ import {
   CosmosProject,
 } from "@subql/types-cosmos";
 
+// These defaults are the testnet values
+const HUB_CONTRACT_CODE_ID = process.env.HUB_CONTRACT_CODE_ID || "4";
+const SMART_ACCOUNT_CONTRACT_CODE_ID =
+  process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "15";
+
+const CHAIN_ID = process.env.CHAIN_ID || "xion-testnet-1";
+const ENDPOINT_URL =
+  process.env.ENDPOINT_URL || "https://rpc.xion-testnet-1.burnt.com:443";
+const START_BLOCK = Number(process.env.START_BLOCK || "2914480");
+
 const project: CosmosProject = {
   specVersion: "1.0.0",
   version: "1.0.0",
@@ -24,7 +34,7 @@ const project: CosmosProject = {
     file: "./schema.graphql",
   },
   network: {
-    chainId: "xion-local-testnet-1",
+    chainId: CHAIN_ID,
     /**
      *
      * These endpoint(s) should be non-pruned archive nodes
@@ -32,7 +42,7 @@ const project: CosmosProject = {
      * When developing your project we suggest getting a private API key
      * We suggest providing an array of endpoints for increased speed and reliability
      */
-    endpoint: ["http://xion:26657"],
+    endpoint: [ENDPOINT_URL],
     chaintypes: new Map([
       [
         "abstractaccount.v1",
@@ -55,7 +65,7 @@ const project: CosmosProject = {
   dataSources: [
     {
       kind: CosmosDatasourceKind.Runtime,
-      startBlock: 0,
+      startBlock: START_BLOCK,
       mapping: {
         file: "./dist/index.js",
         handlers: [
@@ -68,7 +78,7 @@ const project: CosmosProject = {
               messageFilter: {
                 type: "/cosmwasm.wasm.v1.MsgInstantiateContract",
                 values: {
-                  codeId: "4",
+                  codeId: HUB_CONTRACT_CODE_ID,
                 },
               },
             },
@@ -122,7 +132,7 @@ const project: CosmosProject = {
               messageFilter: {
                 type: "/abstractaccount.v1.MsgRegisterAccount",
                 values: {
-                  codeId: "3",
+                  codeId: SMART_ACCOUNT_CONTRACT_CODE_ID,
                 },
               },
             },
