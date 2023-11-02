@@ -43,9 +43,15 @@ export type ICoin = {
 };
 
 export type IAuthenticator = {
-  [x: string]: {
-    pubkey: string;
-    id?: string;
-    signature?: string;
-  };
+  Secp256K1?: { pubkey: string };
+  Ed25519?: { pubkey: string };
+  EthWallet?: { address: string };
+  Jwt?: { aud: string; sub: string };
+};
+
+export type IAddAuthenticator = {
+  Secp256K1?: { id: number; pubkey: string; signature: string };
+  Ed25519?: { id: number; pubkey: string; signature: string };
+  EthWallet?: { id: number; address: string; signature: string };
+  Jwt?: { id: number; aud: string; sub: string; token: string };
 };
