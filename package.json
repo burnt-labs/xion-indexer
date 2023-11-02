@@ -7,7 +7,7 @@
     "build": "subql build",
     "codegen": "subql codegen",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
-    "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
+    "dev": "docker compose down && subql codegen && subql build && docker compose build --no-cache && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && yarn run build",
     "test": "subql build && subql-node-cosmos test"
   },
