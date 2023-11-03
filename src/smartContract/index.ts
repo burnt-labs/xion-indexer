@@ -1,19 +1,16 @@
 import { CosmosEvent } from "@subql/types-cosmos";
 import { SmartAccount, SmartAccountAuthenticator } from "../types";
-import { IAuthenticator } from "../interfaces";
+import {
+  IAuthenticator,
+  IEthWalletAuthenticator,
+  IJWTAuthenticator,
+} from "../interfaces";
 import { v4 as uuidv4 } from "uuid";
 
 export async function handleSmartAccountContractInstantiateHelper(
   event: CosmosEvent
 ): Promise<void> {
   if (event.event.type === "instantiate") {
-    let codeId = event.event.attributes.find(
-      (attr) => attr.key === "code_id"
-    )?.value;
-    if (codeId !== "15") {
-      // This event is not for our codeId
-      return;
-    }
     logger.info("Smart Account Instantiate event detected");
     let contractAddress = event.event.attributes.find(
       (attr) => attr.key === "_contract_address"
@@ -92,7 +89,26 @@ export async function handleSmartAccountContractAddAuthenticatorHelper(
         if (authenticatorData) {
           let authData: IAuthenticator = JSON.parse(authenticatorData);
           let authType = Object.keys(authData)[0];
-          let authPubKey = authData[authType].pubkey;
+          let authPubKey = undefined;
+          switch (authType) {
+            case "Secp256K1":
+            case "Ed25519": {
+              authPubKey = authData[authType].pubkey;
+              break;
+            }
+            case "Jwt": {
+              authPubKey = authData[authType].sub;
+              break;
+            }
+            case "EthWallet": {
+              authPubKey = authData[authType].address;
+              break;
+            }
+          }
+          if (!authPubKey) {
+            logger.info("No auth public key found for the authenticator");
+            return;
+          }
           let authId = authData[authType].id;
           if (!authId) {
             logger.info("No auth id found for the authenticator");

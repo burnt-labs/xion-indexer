@@ -42,10 +42,23 @@ export type ICoin = {
   amount: string;
 };
 
-export type IAuthenticator = {
+export type IJWTAuthenticator = {
+  [x: string]: { id: string; aud: string; sub: string; token: string };
+};
+export type ISECP256K1Authenticator = {
   [x: string]: {
     pubkey: string;
-    id?: string;
+    id: string;
     signature?: string;
   };
 };
+export type IEthWalletAuthenticator = {
+  [x: string]: {
+    id: string;
+    address: string;
+    signature?: string;
+  };
+};
+export type IAuthenticator = IJWTAuthenticator &
+  ISECP256K1Authenticator &
+  IEthWalletAuthenticator;

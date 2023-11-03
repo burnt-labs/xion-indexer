@@ -14,18 +14,18 @@ repository: "https://github.com/subquery/cosmos-subql-starter"
 schema:
   file: ./schema.graphql
 network:
-  chainId: xion-testnet-1
+  chainId: xion-local-testnet-1
   # This endpoint must be a public non-pruned archive node
   # We recommend providing more than one endpoint for improved reliability, performance, and uptime.
   # This is a public node that is rate limited, which will affect indexing speed.
   # When developing your project we strongly suggest getting a private API key.
-  endpoint: https://rpc.xion-testnet-1.burnt.com:443
+  endpoint: http://192.168.0.90:26657
 
   # testnet -> https://rpc.xion-testnet-1.burnt.com:443
   port: 26657
 dataSources:
   - kind: cosmos/Runtime
-    startBlock: 2914480
+    startBlock: 9699
     mapping:
       file: ./dist/index.js
       handlers:
@@ -35,7 +35,7 @@ dataSources:
           filter:
             type: instantiate
             attribute:
-              code_id: "4"
+              code_id: "2"
             messageFilter:
               type: /cosmwasm.wasm.v1.MsgInstantiateContract
         - handler: handleHubContractInstantiateMetadata
@@ -71,16 +71,12 @@ dataSources:
           filter:
             type: instantiate
             attribute:
-              code_id: "15"
-            messageFilter:
-              type: /cosmwasm.wasm.v1.MsgInstantiateContract2
+              code_id: "1"
 
         - handler: handleSmartAccountContractInstantiateMetadata
           kind: cosmos/EventHandler
           filter:
             type: wasm-create_abstract_account
-            messageFilter:
-              type: /cosmwasm.wasm.v1.MsgInstantiateContract2
 
         - handler: handleSmartAccountContractAddAuthenticator
           kind: cosmos/EventHandler
