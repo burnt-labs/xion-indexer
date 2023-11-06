@@ -7,12 +7,12 @@ import {
 // These defaults are the testnet values
 const HUB_CONTRACT_CODE_ID = process.env.HUB_CONTRACT_CODE_ID || "4";
 const SMART_ACCOUNT_CONTRACT_CODE_ID =
-  process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "15";
+  process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "18";
 
 const CHAIN_ID = process.env.CHAIN_ID || "xion-testnet-1";
 const ENDPOINT_URL =
   process.env.ENDPOINT_URL || "https://rpc.xion-testnet-1.burnt.com:443";
-const START_BLOCK = Number(process.env.START_BLOCK || "2914480");
+const START_BLOCK = Number(process.env.START_BLOCK || "3337281");
 
 const project: CosmosProject = {
   specVersion: "1.0.0",
