@@ -40,12 +40,6 @@ export async function handleSeatContractPrimarySaleHalted(): Promise<void> {
   await handleSeatContractPrimarySaleHalted();
 }
 
-export async function handleSmartAccountContractInstantiate(
-  event: CosmosEvent,
-): Promise<void> {
-  await handleSmartAccountContractInstantiateHelper(event);
-}
-
 export async function handleSmartAccountContractInstantiateMetadata(
   event: CosmosEvent,
 ): Promise<void> {

@@ -1,18 +1,17 @@
 import { CosmosEvent } from "@subql/types-cosmos";
 import { SmartAccount, SmartAccountAuthenticator } from "../types";
 import { IAddAuthenticator, IAuthenticator } from "../interfaces";
-import { v4 as uuidv4 } from "uuid";
 
 export async function handleSmartAccountContractInstantiateHelper(
   event: CosmosEvent,
 ): Promise<void> {
-  let code_id =
-    event.event.attributes.find((attr) => attr.key === "code_id")?.value ||
-    "Uknown";
-
   let contractAddress = event.event.attributes.find(
     (attr) => attr.key === "_contract_address",
   )?.value;
+
+  let authenticatorId =
+    event.event.attributes.find((attr) => attr.key === "authenticator_id")
+      ?.value || "0";
 
   logger.info(`Smart Account Instantiate event detected - ${contractAddress}`);
   if (contractAddress) {
@@ -21,7 +20,7 @@ export async function handleSmartAccountContractInstantiateHelper(
     );
     const smartAccount = SmartAccount.create({
       id: contractAddress,
-      latestAuthenticatorId: 1,
+      latestAuthenticatorId: Number(authenticatorId),
     });
     logger.info(`New smart wallet detected - ${contractAddress}`);
     await smartAccount.save();
@@ -37,10 +36,16 @@ export async function handleSmartAccountContractInstantiateMetadataHelper(
   let contractAddress = event.event.attributes.find(
     (attr) => attr.key === "_contract_address",
   )?.value;
+
+  let authenticatorIndex = Number(
+    event.event.attributes.find((attr) => attr.key === "authenticator_id")
+      ?.value || "0",
+  );
+
   if (contractAddress) {
     const smartAccount = SmartAccount.create({
       id: contractAddress,
-      latestAuthenticatorId: 1,
+      latestAuthenticatorId: authenticatorIndex,
     });
     await smartAccount.save();
 
@@ -48,7 +53,6 @@ export async function handleSmartAccountContractInstantiateMetadataHelper(
       (attr) => attr.key === "authenticator",
     )?.value;
     if (authenticatorData) {
-      let authenticatorIndex = 1;
       let authData: IAuthenticator = JSON.parse(authenticatorData);
       for (const authType of Object.keys(authData)) {
         let authenticator: string | undefined;
