@@ -1,32 +1,6 @@
 import { CosmosEvent } from "@subql/types-cosmos";
 import { SmartAccount, SmartAccountAuthenticator } from "../types";
 import { IAddAuthenticator, IAuthenticator } from "../interfaces";
-
-export async function handleSmartAccountContractInstantiateHelper(
-  event: CosmosEvent,
-): Promise<void> {
-  let contractAddress = event.event.attributes.find(
-    (attr) => attr.key === "_contract_address",
-  )?.value;
-
-  let authenticatorId =
-    event.event.attributes.find((attr) => attr.key === "authenticator_id")
-      ?.value || "0";
-
-  logger.info(`Smart Account Instantiate event detected - ${contractAddress}`);
-  if (contractAddress) {
-    logger.info(
-      `Smart Account Instantiate contract address - ${contractAddress}`,
-    );
-    const smartAccount = SmartAccount.create({
-      id: contractAddress,
-      latestAuthenticatorId: Number(authenticatorId),
-    });
-    logger.info(`New smart wallet detected - ${contractAddress}`);
-    await smartAccount.save();
-  }
-}
-
 export async function handleSmartAccountContractInstantiateMetadataHelper(
   event: CosmosEvent,
 ): Promise<void> {
