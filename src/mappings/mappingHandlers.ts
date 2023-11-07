@@ -7,7 +7,6 @@ import { handleSeatContractInstantiateMetadataHelper } from "../seat";
 import { handleSeatContractPrimarySaleCreatedHelper } from "../sale";
 import {
   handleSmartAccountContractAddAuthenticatorHelper,
-  handleSmartAccountContractInstantiateHelper,
   handleSmartAccountContractInstantiateMetadataHelper,
   handleSmartAccountContractRemoveAuthenticatorHelper,
 } from "../smartContract";
