@@ -1,8 +1,12 @@
-# SubQuery - Example Project for Osmosis
+# SubQuery - Xion Chain Indexer
 
 [SubQuery](https://subquery.network) is a fast, flexible, and reliable open-source data indexer that provides you with custom APIs for your web3 project across all of our supported networks. To learn about how to get started with SubQuery, [visit our docs](https://academy.subquery.network).
 
-**This SubQuery project indexes all swaps on Osmosis' on chain DEX**
+This project is a working example of a SubQuery project that indexes data from the Xion Chain network. It is a good starting point for you to learn how to build your own SubQuery project for Xion Chain, or to fork and customise for your own needs.
+
+Currently, this project indexes the following contracts:
+- [Smart Accounts](https://github.com/burnt-labs/contracts)
+- [Hubs and seats](https://github.com/burnt-labs/burnt-cw-hubs)
 
 ## Start
 
