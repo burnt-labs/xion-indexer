@@ -4,7 +4,7 @@ import { ISale, SeatMetadata } from "../interfaces";
 
 async function setupHubSeat(
   hubContractAddress: string | undefined,
-  seatContractAddress: string | undefined
+  seatContractAddress: string | undefined,
 ): Promise<void> {
   let hubSeat: HubSeat | undefined;
   if (hubContractAddress && seatContractAddress) {
@@ -18,27 +18,31 @@ async function setupHubSeat(
 }
 
 export async function handleSeatContractInstantiateMetadataHelper(
-  event: CosmosEvent
+  event: CosmosEvent,
 ): Promise<void> {
   if (event.event.type === "wasm-metadata-instantiate") {
     logger.info("Seat Metadata Instantiate event detected");
     let contractAddress = event.event.attributes.find(
-      (attr) => attr.key === "_contract_address"
+      (attr) => attr.key === "_contract_address",
     )?.value;
     let seatJsonMetadata = event.event.attributes.find(
-      (attr) => attr.key === "metadata"
+      (attr) => attr.key === "metadata",
     )?.value;
     if (seatJsonMetadata) {
       let seatMetadata: SeatMetadata = JSON.parse(seatJsonMetadata);
       let hubAddress = seatMetadata.hub_contract;
       if (!hubAddress) {
-        logger.info("Seat Metadata Instantiate event detected but no hub address");
+        logger.info(
+          "Seat Metadata Instantiate event detected but no hub address",
+        );
         return;
       }
       if (contractAddress) {
         let hub = await Hub.get(hubAddress);
         if (!hub) {
-          logger.info("Seat Metadata Instantiate event detected but no hub attached to hub address");
+          logger.info(
+            "Seat Metadata Instantiate event detected but no hub attached to hub address",
+          );
           // we only care about hubs that must have been created from our codeId
           return;
         }
@@ -51,7 +55,7 @@ export async function handleSeatContractInstantiateMetadataHelper(
           seatMetadata.name,
           seatMetadata.image_uri,
           seatMetadata.description,
-        )
+        );
         // we use this check to confirm that this event is for a seat
         if (!seatMetadata.benefits) {
           return;
@@ -59,21 +63,23 @@ export async function handleSeatContractInstantiateMetadataHelper(
 
         for (let benefit of seatMetadata.benefits) {
           let seatBenefit = await SeatBenefit.get(
-            contractAddress + benefit.name + benefit.status
+            contractAddress + benefit.name + benefit.status,
           );
           if (!seatBenefit) {
             seatBenefit = new SeatBenefit(
               contractAddress,
               contractAddress,
               benefit.name,
-              benefit.status
+              benefit.status,
             );
             await seatBenefit.save();
           }
         }
         await seat.save();
       } else {
-        logger.info("Seat Metadata Instantiate event detected but no contract address");
+        logger.info(
+          "Seat Metadata Instantiate event detected but no contract address",
+        );
       }
     } else {
       logger.info("Seat Metadata Instantiate event detected but no metadata");

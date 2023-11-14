@@ -3,28 +3,28 @@ import { ISale } from "../interfaces";
 import { Seat, Sale, Coin } from "../types";
 
 export async function handleSeatContractPrimarySaleCreatedHelper(
-  event: CosmosEvent
+  event: CosmosEvent,
 ): Promise<void> {
   if (event.event.type === "wasm-sales-add_primary_sale") {
     logger.info("Seat Sale Created event detected");
     let seatContractAddress = event.event.attributes.find(
-      (attr) => attr.key === "contract_address"
+      (attr) => attr.key === "contract_address",
     )?.value;
     if (!seatContractAddress) {
       logger.info(
-        "Seat Sale Created event detected but no seat contract address"
+        "Seat Sale Created event detected but no seat contract address",
       );
       return;
     }
     let seat = await Seat.get(seatContractAddress);
     if (!seat) {
       logger.info(
-        "Seat Sale Created event detected but no seat attached to seat contract address"
+        "Seat Sale Created event detected but no seat attached to seat contract address",
       );
       return;
     }
     let saleMetaJson = event.event.attributes.find(
-      (attr) => attr.key === "sale_object"
+      (attr) => attr.key === "sale_object",
     )?.value;
     if (saleMetaJson) {
       let saleMeta: ISale = JSON.parse(saleMetaJson);
@@ -35,14 +35,14 @@ export async function handleSeatContractPrimarySaleCreatedHelper(
         BigInt(saleMeta.tokens_minted),
         BigInt(saleMeta.start_time),
         BigInt(saleMeta.end_time),
-        saleMeta.disabled
+        saleMeta.disabled,
       );
       for (let coin of saleMeta.price) {
         await new Coin(
           seatContractAddress,
           seatContractAddress + saleMeta.start_time,
           coin.denom,
-          BigInt(coin.amount)
+          BigInt(coin.amount),
         ).save();
       }
       await sale.save();
@@ -56,30 +56,30 @@ export async function handleSeatContractPrimarySaleHalted(event: CosmosEvent) {
   if (event.event.type === "wasm-sales-halt_sale") {
     logger.info("Seat Sale Halted event detected");
     let seatContractAddress = event.event.attributes.find(
-      (attr) => attr.key === "contract_address"
+      (attr) => attr.key === "contract_address",
     )?.value;
     if (!seatContractAddress) {
       logger.info(
-        "Seat Sale Halted event detected but no seat contract address"
+        "Seat Sale Halted event detected but no seat contract address",
       );
       return;
     }
     let seat = await Seat.get(seatContractAddress);
     if (!seat) {
       logger.info(
-        "Seat Sale Halted event detected but no seat attached to seat contract address"
+        "Seat Sale Halted event detected but no seat attached to seat contract address",
       );
       return;
     }
     let sale = await Sale.get(seatContractAddress);
     if (!sale) {
       logger.info(
-        "Seat Sale Halted event detected but no sale attached to seat contract address"
+        "Seat Sale Halted event detected but no sale attached to seat contract address",
       );
       return;
     }
     let saleMetaJson = event.event.attributes.find(
-      (attr) => attr.key === "sale_object"
+      (attr) => attr.key === "sale_object",
     )?.value;
     if (saleMetaJson) {
       let saleMeta: ISale = JSON.parse(saleMetaJson);

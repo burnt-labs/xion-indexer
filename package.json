@@ -5,11 +5,15 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
+    "build:docker": "dotenv -c docker subql build",
     "codegen": "subql codegen",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
-    "dev": "subql codegen && subql build && docker-compose pull && docker-compose up --remove-orphans",
+    "dev": "docker compose down && subql codegen && dotenv -c docker subql build && docker compose build --no-cache && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && yarn run build",
-    "test": "subql build && subql-node-cosmos test"
+    "test": "subql build && subql-node-cosmos test",
+    "start": "./node_modules/@subql/node-cosmos/bin/run",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "homepage": "https://xion.burnt.com/",
   "repository": "github:burnt-labs/xion-indexer.git",
@@ -22,10 +26,12 @@
   "license": "MIT",
   "devDependencies": {
     "@cosmjs/stargate": "^0.28.9",
-    "@subql/cli": "^3.5.1",
+    "@subql/cli": "^4.0.5",
     "@subql/node-cosmos": "latest",
     "@subql/testing": "latest",
     "@types/uuid": "^9.0.5",
+    "dotenv": "^16.3.1",
+    "prettier": "^3.0.3",
     "typescript": "^5.2.2"
   },
   "dependencies": {
