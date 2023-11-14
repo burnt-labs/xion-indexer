@@ -7,7 +7,7 @@ import {
 // These defaults are the testnet values
 const HUB_CONTRACT_CODE_ID = process.env.HUB_CONTRACT_CODE_ID || "4";
 const SMART_ACCOUNT_CONTRACT_CODE_ID =
-  process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "20";
+  process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "21";
 
 const CHAIN_ID = process.env.CHAIN_ID || "xion-testnet-1";
 const ENDPOINT_URL =
