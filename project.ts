@@ -5,7 +5,7 @@ import {
 } from "@subql/types-cosmos";
 
 // These defaults are the testnet values
-const HUB_CONTRACT_CODE_ID = process.env.HUB_CONTRACT_CODE_ID || "4";
+const HUB_CONTRACT_CODE_ID = process.env.HUB_CONTRACT_CODE_ID || "7";
 const SMART_ACCOUNT_CONTRACT_CODE_ID =
   process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "21";
 
