@@ -5,14 +5,14 @@ import {
 } from "@subql/types-cosmos";
 
 // These defaults are the testnet values
-const HUB_CONTRACT_CODE_ID = process.env.HUB_CONTRACT_CODE_ID || "7";
+const HUB_CONTRACT_CODE_ID = process.env.HUB_CONTRACT_CODE_ID || "1";
 const SMART_ACCOUNT_CONTRACT_CODE_ID =
   process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "21";
 
 const CHAIN_ID = process.env.CHAIN_ID || "xion-testnet-1";
 const ENDPOINT_URL =
-  process.env.ENDPOINT_URL || "https://rpc.xion-testnet-1.burnt.com:443";
-const START_BLOCK = Number(process.env.START_BLOCK || "3371922");
+  process.env.ENDPOINT_URL || "https://xion-test-priv-rpc.kingnodes.com:443";
+const START_BLOCK = Number(process.env.START_BLOCK || "8300000");
 
 const project: CosmosProject = {
   specVersion: "1.0.0",
