@@ -6,12 +6,6 @@ export async function handleHubContractInstantiateHelper(
   event: CosmosEvent,
 ): Promise<void> {
   if (event.event.type === "instantiate") {
-    let codeId = event.event.attributes.find((attr) => attr.key === "code_id")
-      ?.value;
-    if (codeId !== "4") {
-      // This event is not for our codeId
-      return;
-    }
     logger.info("HUB Instantiate event detected");
     let contractAddress = event.event.attributes.find(
       (attr) => attr.key === "_contract_address",
