@@ -53,6 +53,7 @@ export async function handleSmartAccountContractInstantiateMetadataHelper(
             const credString = Buffer.from(cred, "base64").toString("utf-8");
             const parsedCred = JSON.parse(credString);
             authenticator = parsedCred.ID;
+            break;
           }
           default:
             logger.info(`Unknown authenticator type - ${authType}`);
@@ -117,6 +118,20 @@ export async function handleSmartAccountContractAddAuthenticatorHelper(
               authenticatorIndex = authData[authType]?.id;
               authenticator = `${authData[authType]?.aud}.${authData[authType]?.sub}`;
               break;
+            case "Passkey": {
+              const cred = authData[authType]?.credential;
+              if (!cred) {
+                logger.info(
+                  "No credential found for the passkey authenticator"
+                );
+                return;
+              }
+              // credential is base64 encoded, decode it
+              const credString = Buffer.from(cred, "base64").toString("utf-8");
+              const parsedCred = JSON.parse(credString);
+              authenticator = parsedCred.ID;
+              break;
+            }
             default:
               logger.info(`Unknown authenticator type - ${authType}`);
               return;
