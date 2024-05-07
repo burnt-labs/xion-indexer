@@ -2,18 +2,18 @@ import { CosmosEvent } from "@subql/types-cosmos";
 import { SmartAccount, SmartAccountAuthenticator } from "../types";
 import { IAddAuthenticator, IAuthenticator } from "../interfaces";
 export async function handleSmartAccountContractInstantiateMetadataHelper(
-  event: CosmosEvent,
+  event: CosmosEvent
 ): Promise<void> {
   logger.info(
-    `Smart Account Data Instantiate event detected - ${event.event.type}`,
+    `Smart Account Data Instantiate event detected - ${event.event.type}`
   );
   let contractAddress = event.event.attributes.find(
-    (attr) => attr.key === "_contract_address",
+    (attr) => attr.key === "_contract_address"
   )?.value;
 
   let authenticatorIndex = Number(
     event.event.attributes.find((attr) => attr.key === "authenticator_id")
-      ?.value || "0",
+      ?.value || "0"
   );
 
   if (contractAddress) {
@@ -24,7 +24,7 @@ export async function handleSmartAccountContractInstantiateMetadataHelper(
     await smartAccount.save();
 
     let authenticatorData = event.event.attributes.find(
-      (attr) => attr.key === "authenticator",
+      (attr) => attr.key === "authenticator"
     )?.value;
     if (authenticatorData) {
       let authData: IAuthenticator = JSON.parse(authenticatorData);
@@ -43,6 +43,17 @@ export async function handleSmartAccountContractInstantiateMetadataHelper(
           case "Jwt":
             authenticator = `${authData[authType]?.aud}.${authData[authType]?.sub}`;
             break;
+          case "Passkey": {
+            const cred = authData[authType]?.credential;
+            if (!cred) {
+              logger.info("No credential found for the passkey authenticator");
+              return;
+            }
+            // credential is base64 encoded, decode it
+            const credString = Buffer.from(cred, "base64").toString("utf-8");
+            const parsedCred = JSON.parse(credString);
+            authenticator = parsedCred.ID;
+          }
           default:
             logger.info(`Unknown authenticator type - ${authType}`);
             return;
@@ -69,11 +80,11 @@ export async function handleSmartAccountContractInstantiateMetadataHelper(
 }
 
 export async function handleSmartAccountContractAddAuthenticatorHelper(
-  event: CosmosEvent,
+  event: CosmosEvent
 ): Promise<void> {
   logger.info("Smart Account Add Auth event detected");
   let contractAddress = event.event.attributes.find(
-    (attr) => attr.key === "_contract_address",
+    (attr) => attr.key === "_contract_address"
   )?.value;
   if (contractAddress) {
     let smartAccount = await SmartAccount.get(contractAddress);
@@ -82,7 +93,7 @@ export async function handleSmartAccountContractAddAuthenticatorHelper(
       return;
     } else {
       let authenticatorData = event.event.attributes.find(
-        (attr) => attr.key === "authenticator",
+        (attr) => attr.key === "authenticator"
       )?.value;
       if (authenticatorData) {
         let authData: IAddAuthenticator = JSON.parse(authenticatorData);
@@ -118,7 +129,7 @@ export async function handleSmartAccountContractAddAuthenticatorHelper(
 
           if (!authenticatorIndex) {
             logger.info(
-              `No authenticator index found for the type - ${authType}`,
+              `No authenticator index found for the type - ${authType}`
             );
             return;
           }
@@ -147,12 +158,12 @@ export async function handleSmartAccountContractAddAuthenticatorHelper(
 }
 
 export async function handleSmartAccountContractRemoveAuthenticatorHelper(
-  event: CosmosEvent,
+  event: CosmosEvent
 ): Promise<void> {
   if (event.event.type === "wasm-remove_auth_method") {
     logger.info("Smart Account Remove Auth event detected");
     const contractAddress = event.event.attributes.find(
-      (attr) => attr.key === "_contract_address",
+      (attr) => attr.key === "_contract_address"
     )?.value;
     if (contractAddress) {
       const smartAccount = await SmartAccount.get(contractAddress);
@@ -161,7 +172,7 @@ export async function handleSmartAccountContractRemoveAuthenticatorHelper(
         return;
       } else {
         const authenticatorId = event.event.attributes.find(
-          (attr) => attr.key === "authenticator_id",
+          (attr) => attr.key === "authenticator_id"
         )?.value;
         if (authenticatorId && Number(authenticatorId)) {
           const authId = `${contractAddress}-${authenticatorId}`;
