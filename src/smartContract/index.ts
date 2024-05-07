@@ -100,22 +100,18 @@ export async function handleSmartAccountContractAddAuthenticatorHelper(
         let authData: IAddAuthenticator = JSON.parse(authenticatorData);
         for (const authType of Object.keys(authData)) {
           let authenticator: string | undefined;
-          let authenticatorIndex: number | undefined;
+          const authenticatorIndex = authData[authType as keyof IAddAuthenticator]?.id;
           switch (authType) {
             case "Secp256K1":
-              authenticatorIndex = authData[authType]?.id;
               authenticator = authData[authType]?.pubkey;
               break;
             case "Ed25519":
-              authenticatorIndex = authData[authType]?.id;
               authenticator = authData[authType]?.pubkey;
               break;
             case "EthWallet":
-              authenticatorIndex = authData[authType]?.id;
               authenticator = authData[authType]?.address;
               break;
             case "Jwt":
-              authenticatorIndex = authData[authType]?.id;
               authenticator = `${authData[authType]?.aud}.${authData[authType]?.sub}`;
               break;
             case "Passkey": {
