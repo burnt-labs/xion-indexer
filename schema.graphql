@@ -86,3 +86,24 @@ type SmartAccountAuthenticator @entity {
   authenticatorIndex: Int! # The index of the authenticator on the smart account
   version: String! # The version of the authenticator
 }
+
+type UserAddress @entity {
+  id: ID! # the grantee address
+  granterGrants: [AuthzGrant]! @derivedFrom(field: "granter") # This is a lookup for the granter grants
+  granteeGrants: [AuthzGrant]! @derivedFrom(field: "grantee") # This is a lookup for the grantee grants
+}
+
+type AuthzAuthorization @entity {
+  id: ID! # the (grantee address + granter address + type) to make this unique
+  type: String! # The type of the authorization
+  authData: String! # The json serialized authorization data
+  expiration: BigInt! # The expiry time of the grant
+  grant: AuthzGrant! # The grant that this authorization is associated with
+}
+
+type AuthzGrant @entity {
+  id: ID! # the (grantee address + granter address + type) to make this unique
+  grant: [AuthzAuthorization]! @derivedFrom(field: "grant") # reverse lookup into the authorization
+  granter: UserAddress! # The address of the granter
+  grantee: UserAddress! # The address of the grantee
+}
