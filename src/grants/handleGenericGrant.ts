@@ -1,7 +1,7 @@
 import { CosmosMessage } from "@subql/types-cosmos";
-import { MsgGrant } from "../types/cosmos/authz/v1beta1/tx";
+import { MsgGrant } from "../proto_types/cosmos/authz/v1beta1/tx";
 import { AuthzAuthorization, AuthzGrant, UserAddress } from "../types";
-import { GenericAuthorization } from "../types/cosmos/authz/authz";
+import { GenericAuthorization } from "../proto_types/cosmos/authz/authz";
 
 export async function handleAuthzGenericMsgGrant(msg: CosmosMessage<MsgGrant>) {
   const msgGrantee = msg.msg.decodedMsg.grantee;

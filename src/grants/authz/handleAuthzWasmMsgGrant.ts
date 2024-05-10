@@ -1,7 +1,6 @@
 import { Any } from "../../types/proto-interfaces/google/protobuf/any";
-import { MsgGrant } from "../../types/cosmos/authz/v1beta1/tx";
+import { MsgGrant } from "../../proto_types/cosmos/authz/v1beta1/tx";
 import { CosmosMessage } from "@subql/types-cosmos";
-import { ContractExecutionAuthorization } from "../../types/cosmwasm/wasm/v1/authz";
 import {
   AuthzAuthorization,
   AuthzGrant,
@@ -14,7 +13,8 @@ import {
   AllowAllMessagesFilter,
   AcceptedMessagesFilter,
   AcceptedMessageKeysFilter,
-} from "../../types/cosmwasm/wasm/v1/authz";
+  ContractExecutionAuthorization,
+} from "../../proto_types/cosmwasm/wasm/v1/authz";
 
 export async function handleAuthzWasmMsgGrant(msg: CosmosMessage<MsgGrant>) {
   const msgGrantee = msg.msg.decodedMsg.grantee;

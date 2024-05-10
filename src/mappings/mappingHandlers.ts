@@ -1,4 +1,4 @@
-import { MsgGrant } from "../types/cosmos/authz/v1beta1/tx";
+import { MsgGrant } from "../proto_types/cosmos/authz/v1beta1/tx";
 import { CosmosEvent, CosmosMessage } from "@subql/types-cosmos";
 import {
   handleHubContractInstantiateHelper,

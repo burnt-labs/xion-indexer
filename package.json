@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "rm -rf dist && subql build",
-    "generate:proto:types": "protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/types/ --ts_proto_opt=useDate=false --proto_path proto $1",
+    "generate:proto:types": "rm -rf src/proto_types/* && protoc --plugin=./node_modules/.bin/protoc-gen-ts_proto --ts_proto_out=src/proto_types/ --ts_proto_opt=useDate=false --proto_path proto $1",
     "build:docker": "dotenv -c docker subql build",
     "codegen": "subql codegen",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
