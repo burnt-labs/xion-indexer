@@ -107,3 +107,7 @@ type AuthzGrant @entity {
   granter: UserAddress! # The address of the granter
   grantee: UserAddress! # The address of the grantee
 }
+
+type Subscription {
+  AuthZGrants(id: ID!, mutation: String!): AuthzGrant
+}
