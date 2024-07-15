@@ -8,7 +8,6 @@ This project is a working example of a SubQuery project that indexes data from t
 
 Currently, this project indexes the following contracts:
 - [Smart Accounts](https://github.com/burnt-labs/contracts)
-- [Hubs and seats](https://github.com/burnt-labs/burnt-cw-hubs)
 
 ## Start
 
