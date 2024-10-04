@@ -7,6 +7,7 @@
     "build": "subql build",
     "build:docker": "dotenv -c docker subql build",
     "codegen": "subql codegen",
+    "subql:publish": "subql publish",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
     "dev": "docker compose down && subql codegen && dotenv -c docker subql build && docker compose build --no-cache && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && yarn run build",
