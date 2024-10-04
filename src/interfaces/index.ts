@@ -47,6 +47,7 @@ export type IAuthenticator = {
   Ed25519?: { pubkey: string };
   EthWallet?: { address: string };
   Jwt?: { aud: string; sub: string };
+  Passkey? : { credential: string };
 };
 
 export type IAddAuthenticator = {
@@ -54,4 +55,5 @@ export type IAddAuthenticator = {
   Ed25519?: { id: number; pubkey: string; signature: string };
   EthWallet?: { id: number; address: string; signature: string };
   Jwt?: { id: number; aud: string; sub: string; token: string };
+  Passkey? : { id: number, url: string, credential: string };
 };
