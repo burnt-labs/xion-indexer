@@ -5,14 +5,13 @@ import {
 } from "@subql/types-cosmos";
 
 // These defaults are the testnet values
-const HUB_CONTRACT_CODE_ID = process.env.HUB_CONTRACT_CODE_ID || "7";
 const SMART_ACCOUNT_CONTRACT_CODE_ID =
   process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "793";
 
 const CHAIN_ID = process.env.CHAIN_ID || "xion-testnet-1";
 const ENDPOINT_URL =
   process.env.ENDPOINT_URL || "https://rpc.xion-testnet-1.burnt.com:443";
-const START_BLOCK = Number(process.env.START_BLOCK || "9238800");
+const START_BLOCK = Number(process.env.START_BLOCK || "3371922");
 
 const project: CosmosProject = {
   specVersion: "1.0.0",
@@ -69,61 +68,6 @@ const project: CosmosProject = {
       mapping: {
         file: "./dist/index.js",
         handlers: [
-          // Hub contract handlers
-          {
-            handler: "handleHubContractInstantiate",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "instantiate",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgInstantiateContract",
-                values: {
-                  codeId: HUB_CONTRACT_CODE_ID,
-                },
-              },
-            },
-          },
-          {
-            handler: "handleHubContractInstantiateMetadata",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm-metadata-instantiate",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgInstantiateContract",
-              },
-            },
-          },
-          // Seat contract handlers
-          {
-            handler: "handleSeatContractInstantiateMetadata",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm-metadata-instantiate",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgInstantiateContract",
-              },
-            },
-          },
-          {
-            handler: "handleSeatContractPrimarySaleCreated",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm-sales-add_primary_sale",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgExecuteContract",
-              },
-            },
-          },
-          {
-            handler: "handleSeatContractPrimarySaleHalted",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm-sales-halt_sale",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgExecuteContract",
-              },
-            },
-          },
           {
             handler: "handleSmartAccountContractInstantiateMetadata",
             kind: CosmosHandlerKind.Event,

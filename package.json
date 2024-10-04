@@ -7,6 +7,7 @@
     "build": "subql build",
     "build:docker": "dotenv -c docker subql build",
     "codegen": "subql codegen",
+    "subql:publish": "subql publish",
     "start:docker": "docker-compose pull && docker-compose up --remove-orphans",
     "dev": "docker compose down && subql codegen && dotenv -c docker subql build && docker compose build --no-cache && docker-compose up --remove-orphans",
     "prepack": "rm -rf dist && yarn run build",
@@ -26,7 +27,7 @@
   "license": "MIT",
   "devDependencies": {
     "@cosmjs/stargate": "^0.28.9",
-    "@subql/cli": "^4.0.5",
+    "@subql/cli": "^4.13.1",
     "@subql/node-cosmos": "latest",
     "@subql/testing": "latest",
     "@types/uuid": "^9.0.5",
