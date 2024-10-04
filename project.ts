@@ -2,11 +2,16 @@ import {
   CosmosDatasourceKind,
   CosmosHandlerKind,
   CosmosProject,
+  CosmosRuntimeHandler,
 } from "@subql/types-cosmos";
 
 // These defaults are the testnet values
-const SMART_ACCOUNT_CONTRACT_CODE_ID =
-  process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "793";
+let SMART_ACCOUNT_CONTRACT_CODE_ID = process.env
+  .SMART_ACCOUNT_CONTRACT_CODE_ID || ["21", "793"];
+
+SMART_ACCOUNT_CONTRACT_CODE_ID = Array.isArray(SMART_ACCOUNT_CONTRACT_CODE_ID)
+  ? SMART_ACCOUNT_CONTRACT_CODE_ID
+  : [SMART_ACCOUNT_CONTRACT_CODE_ID];
 
 const CHAIN_ID = process.env.CHAIN_ID || "xion-testnet-1";
 const ENDPOINT_URL =
@@ -67,41 +72,47 @@ const project: CosmosProject = {
       startBlock: START_BLOCK,
       mapping: {
         file: "./dist/index.js",
-        handlers: [
-          {
-            handler: "handleSmartAccountContractInstantiateMetadata",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm-create_abstract_account",
-              messageFilter: {
-                type: "/abstractaccount.v1.MsgRegisterAccount",
-                values: {
-                  codeId: SMART_ACCOUNT_CONTRACT_CODE_ID,
+        handlers: SMART_ACCOUNT_CONTRACT_CODE_ID.reduce<
+          Array<CosmosRuntimeHandler>
+        >(
+          (result, codeId) =>
+            result.concat([
+              {
+                handler: "handleSmartAccountContractInstantiateMetadata",
+                kind: CosmosHandlerKind.Event,
+                filter: {
+                  type: "wasm-create_abstract_account",
+                  messageFilter: {
+                    type: "/abstractaccount.v1.MsgRegisterAccount",
+                    values: {
+                      codeId: codeId,
+                    },
+                  },
                 },
               },
-            },
-          },
-          {
-            handler: "handleSmartAccountContractAddAuthenticator",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm-add_auth_method",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgExecuteContract",
+              {
+                handler: "handleSmartAccountContractAddAuthenticator",
+                kind: CosmosHandlerKind.Event,
+                filter: {
+                  type: "wasm-add_auth_method",
+                  messageFilter: {
+                    type: "/cosmwasm.wasm.v1.MsgExecuteContract",
+                  },
+                },
               },
-            },
-          },
-          {
-            handler: "handleSmartAccountContractRemoveAuthenticator",
-            kind: CosmosHandlerKind.Event,
-            filter: {
-              type: "wasm-remove_auth_method",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgExecuteContract",
+              {
+                handler: "handleSmartAccountContractRemoveAuthenticator",
+                kind: CosmosHandlerKind.Event,
+                filter: {
+                  type: "wasm-remove_auth_method",
+                  messageFilter: {
+                    type: "/cosmwasm.wasm.v1.MsgExecuteContract",
+                  },
+                },
               },
-            },
-          },
-        ],
+            ]),
+          [],
+        ),
       },
     },
   ],
