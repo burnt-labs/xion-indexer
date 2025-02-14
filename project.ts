@@ -27,6 +27,14 @@ const networks: Networks = {
     startBlock: 3371922,
     bypassBlocks: [4962232, 8247887],
   },
+  "xion-testnet-2": {
+    name: "xion-testnet-2-indexer",
+    codeIds: ["1"],
+    chainId: "xion-testnet-2",
+    endpoint: "https://rpc.xion-testnet-2.burnt.com:443",
+    startBlock: 1,
+    bypassBlocks: [],
+  },
   "xion-mainnet-1": {
     name: "xion-mainnet-indexer",
     codeIds: ["1", "5"],
