@@ -29,7 +29,7 @@ const networks: Networks = {
   },
   "xion-testnet-2": {
     name: "xion-testnet-2-indexer",
-    codeIds: ["1"],
+    codeIds: ["1", "28"],
     chainId: "xion-testnet-2",
     endpoint: "https://rpc.xion-testnet-2.burnt.com:443",
     startBlock: 1,
