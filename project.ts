@@ -32,7 +32,7 @@ const networks: Networks = {
     codeIds: ["1", "28"],
     chainId: "xion-testnet-2",
     endpoint: "https://rpc.xion-testnet-2.burnt.com:443",
-    startBlock: 1,
+    startBlock: 350000,
     bypassBlocks: [],
   },
   "xion-mainnet-1": {
@@ -115,45 +115,29 @@ const project: CosmosProject = {
       startBlock: selectedNetwork.startBlock,
       mapping: {
         file: "./dist/index.js",
-        handlers: selectedNetwork.codeIds.reduce<Array<CosmosRuntimeHandler>>(
-          (result, codeId) =>
-            result.concat([
-              {
-                handler: "handleSmartAccountContractInstantiateMetadata",
-                kind: CosmosHandlerKind.Event,
-                filter: {
-                  type: "wasm-create_abstract_account",
-                  messageFilter: {
-                    type: "/abstractaccount.v1.MsgRegisterAccount",
-                    values: {
-                      codeId: codeId,
-                    },
-                  },
-                },
-              },
-              {
-                handler: "handleSmartAccountContractAddAuthenticator",
-                kind: CosmosHandlerKind.Event,
-                filter: {
-                  type: "wasm-add_auth_method",
-                  messageFilter: {
-                    type: "/cosmwasm.wasm.v1.MsgExecuteContract",
-                  },
-                },
-              },
-              {
-                handler: "handleSmartAccountContractRemoveAuthenticator",
-                kind: CosmosHandlerKind.Event,
-                filter: {
-                  type: "wasm-remove_auth_method",
-                  messageFilter: {
-                    type: "/cosmwasm.wasm.v1.MsgExecuteContract",
-                  },
-                },
-              },
-            ]),
-          [],
-        ),
+        handlers: [
+          {
+            handler: "handleSmartAccountContractInstantiateMetadata",
+            kind: CosmosHandlerKind.Event,
+            filter: {
+              type: "wasm-create_abstract_account",
+            },
+          },
+          {
+            handler: "handleSmartAccountContractAddAuthenticator",
+            kind: CosmosHandlerKind.Event,
+            filter: {
+              type: "wasm-add_auth_method",
+            },
+          },
+          {
+            handler: "handleSmartAccountContractRemoveAuthenticator",
+            kind: CosmosHandlerKind.Event,
+            filter: {
+              type: "wasm-remove_auth_method",
+            },
+          },
+        ],
       },
     },
   ],
