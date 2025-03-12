@@ -1,5 +1,13 @@
 # SubQuery - Xion Chain Indexer
 
+## To Publish run the following
+
+```bash
+CHAIN_ID="<chain_id>" yarn subql:publish
+```
+
+Take the resulting IPFS hash and update it in the [managed dashboard](https://managedservice.subquery.network/orgs/burnt-labs/projects/).
+
 
 
 [SubQuery](https://subquery.network) is a fast, flexible, and reliable open-source data indexer that provides you with custom APIs for your web3 project across all of our supported networks. To learn about how to get started with SubQuery, [visit our docs](https://academy.subquery.network).

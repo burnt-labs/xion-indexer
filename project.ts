@@ -2,27 +2,74 @@ import {
   CosmosDatasourceKind,
   CosmosHandlerKind,
   CosmosProject,
+  CosmosRuntimeHandler,
 } from "@subql/types-cosmos";
 
-// These defaults are the testnet values
-const SMART_ACCOUNT_CONTRACT_CODE_ID =
-  process.env.SMART_ACCOUNT_CONTRACT_CODE_ID || "793";
+type Network = {
+  name: string;
+  codeIds: string[];
+  chainId: string;
+  endpoint: string;
+  startBlock: number;
+  bypassBlocks: number[];
+};
 
-const CHAIN_ID = process.env.CHAIN_ID || "xion-testnet-1";
-const ENDPOINT_URL =
-  process.env.ENDPOINT_URL || "https://rpc.xion-testnet-1.burnt.com:443";
-const START_BLOCK = Number(process.env.START_BLOCK || "3371922");
+type Networks = {
+  [key: string]: Network;
+};
+
+const networks: Networks = {
+  "xion-testnet-1": {
+    name: "xion-indexer",
+    codeIds: ["21", "793"],
+    chainId: "xion-testnet-1",
+    endpoint: "https://rpc.xion-testnet-1.burnt.com:443",
+    startBlock: 3371922,
+    bypassBlocks: [4962232, 8247887],
+  },
+  "xion-testnet-2": {
+    name: "xion-testnet-2-indexer",
+    codeIds: ["1", "28"],
+    chainId: "xion-testnet-2",
+    endpoint: "https://rpc.xion-testnet-2.burnt.com:443",
+    startBlock: 350000,
+    bypassBlocks: [],
+  },
+  "xion-mainnet-1": {
+    name: "xion-mainnet-indexer",
+    codeIds: ["1", "5"],
+    chainId: "xion-mainnet-1",
+    endpoint: "https://rpc.xion-api.com/",
+    startBlock: 1825347,
+    bypassBlocks: [],
+  },
+};
+
+if (!process.env.CHAIN_ID) {
+  throw new Error("CHAIN_ID is not set");
+}
+
+const selectedNetwork = networks[process.env.CHAIN_ID];
+
+if (!selectedNetwork) {
+  throw new Error(
+    `Chain ID ${
+      process.env.CHAIN_ID
+    } is not supported. Supported networks are ${Object.keys(networks).join(
+      ", ",
+    )}`,
+  );
+}
 
 const project: CosmosProject = {
   specVersion: "1.0.0",
   version: "1.0.0",
-  name: "xion-indexer",
-  description:
-    "Xion SubQuery project for account abstraction and hub/seat contracts.",
+  name: selectedNetwork.name,
+  description: "Xion SubQuery project for account abstraction",
   runner: {
     node: {
       name: "@subql/node-cosmos",
-      version: ">=3.0.0",
+      version: ">=4.0.0",
     },
     query: {
       name: "@subql/query",
@@ -33,7 +80,7 @@ const project: CosmosProject = {
     file: "./schema.graphql",
   },
   network: {
-    chainId: CHAIN_ID,
+    chainId: selectedNetwork.chainId,
     /**
      *
      * These endpoint(s) should be non-pruned archive nodes
@@ -41,7 +88,7 @@ const project: CosmosProject = {
      * When developing your project we suggest getting a private API key
      * We suggest providing an array of endpoints for increased speed and reliability
      */
-    endpoint: [ENDPOINT_URL],
+    endpoint: [selectedNetwork.endpoint],
     chaintypes: new Map([
       [
         "abstractaccount.v1",
@@ -60,11 +107,12 @@ const project: CosmosProject = {
         },
       ],
     ]),
+    bypassBlocks: selectedNetwork.bypassBlocks,
   },
   dataSources: [
     {
       kind: CosmosDatasourceKind.Runtime,
-      startBlock: START_BLOCK,
+      startBlock: selectedNetwork.startBlock,
       mapping: {
         file: "./dist/index.js",
         handlers: [
@@ -73,12 +121,6 @@ const project: CosmosProject = {
             kind: CosmosHandlerKind.Event,
             filter: {
               type: "wasm-create_abstract_account",
-              messageFilter: {
-                type: "/abstractaccount.v1.MsgRegisterAccount",
-                values: {
-                  codeId: SMART_ACCOUNT_CONTRACT_CODE_ID,
-                },
-              },
             },
           },
           {
@@ -86,9 +128,6 @@ const project: CosmosProject = {
             kind: CosmosHandlerKind.Event,
             filter: {
               type: "wasm-add_auth_method",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgExecuteContract",
-              },
             },
           },
           {
@@ -96,9 +135,6 @@ const project: CosmosProject = {
             kind: CosmosHandlerKind.Event,
             filter: {
               type: "wasm-remove_auth_method",
-              messageFilter: {
-                type: "/cosmwasm.wasm.v1.MsgExecuteContract",
-              },
             },
           },
         ],
