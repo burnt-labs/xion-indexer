@@ -55,6 +55,10 @@ export async function handleSmartAccountContractInstantiateMetadataHelper(
             authenticator = parsedCred.ID;
             break;
           }
+          case "ZKEmail": {
+            authenticator = authData[authType]?.email_salt;
+            break;
+          }
           default:
             logger.info(`Unknown authenticator type - ${authType}`);
             return;
@@ -126,6 +130,10 @@ export async function handleSmartAccountContractAddAuthenticatorHelper(
               const credString = Buffer.from(cred, "base64").toString("utf-8");
               const parsedCred = JSON.parse(credString);
               authenticator = parsedCred.ID;
+              break;
+            }
+            case "ZKEmail": {
+              authenticator = authData[authType]?.email_salt;
               break;
             }
             default:

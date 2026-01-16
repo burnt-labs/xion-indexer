@@ -4,6 +4,7 @@ export type IAuthenticator = {
   EthWallet?: { address: string };
   Jwt?: { aud: string; sub: string };
   Passkey? : { credential: string };
+  ZKEmail?: { email_salt: string };
 };
 
 export type IAddAuthenticator = {
@@ -12,4 +13,5 @@ export type IAddAuthenticator = {
   EthWallet?: { id: number; address: string; signature: string };
   Jwt?: { id: number; aud: string; sub: string; token: string };
   Passkey? : { id: number, url: string, credential: string };
+  ZKEmail?: { id: number; email_salt: string; allowed_email_hosts: string[]; signature: string };
 };
