@@ -43,6 +43,14 @@ const networks: Networks = {
     startBlock: 1825347,
     bypassBlocks: [],
   },
+  "xion-devnet-1": {
+    name: "xion-devnet-indexer",
+    codeIds: ["1"],
+    chainId: "xion-devnet-1",
+    endpoint: "http://haproxy:26657",
+    startBlock: 1,
+    bypassBlocks: [],
+  },
 };
 
 if (!process.env.CHAIN_ID) {
@@ -88,7 +96,7 @@ const project: CosmosProject = {
      * When developing your project we suggest getting a private API key
      * We suggest providing an array of endpoints for increased speed and reliability
      */
-    endpoint: [selectedNetwork.endpoint],
+    endpoint: [process.env.ENDPOINT_URL || selectedNetwork.endpoint],
     chaintypes: new Map([
       [
         "abstractaccount.v1",
